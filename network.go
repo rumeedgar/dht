@@ -22,7 +22,6 @@ func (n *Node) handleConnection(conn net.Conn) {
 	var request map[string]string
 	decoder.Decode(&request)
 
-	// Handle store and retrieve requests
 	if request["action"] == "store" {
 		n.Store(request["key"], request["value"])
 		fmt.Fprintf(conn, "Stored key: %s", request["key"])
