@@ -15,7 +15,24 @@ func main() {
 	node3.Join(node2)
 
 	// Print neighbors for each node
-	fmt.Println("Node 1 Neighbors:", node1.Neighbors)
-	fmt.Println("Node 2 Neighbors:", node2.Neighbors)
-	fmt.Println("Node 3 Neighbors:", node3.Neighbors)
+	fmt.Println("Node 1 Neighbors:")
+	for _, neighbor := range node1.Neighbors {
+		// Dereference the pointer and print ID and Address
+		fmt.Printf("{ID: %d Address: %s} ", neighbor.ID, neighbor.Address)
+	}
+	fmt.Println()
+
+	fmt.Println("Node 2 Neighbors:")
+	for _, neighbor := range node2.Neighbors {
+		// Dereference the pointer and print ID and Address
+		fmt.Printf("{ID: %d Address: %s} ", neighbor.ID, neighbor.Address)
+	}
+	fmt.Println()
+
+	fmt.Println("Node 3 Neighbors:")
+	for _, neighbor := range node3.Neighbors {
+		// Dereference the pointer and print ID and Address
+		fmt.Printf("{ID: %d Address: %s} ", neighbor.ID, neighbor.Address)
+	}
+	fmt.Println()
 }
