@@ -1,6 +1,9 @@
 package main
 
-import "sort"
+import (
+	"fmt"
+	"sort"
+)
 
 // XOR distance between two node IDs
 func xorDistance(a, b uint32) uint32 {
@@ -9,32 +12,49 @@ func xorDistance(a, b uint32) uint32 {
 
 // KBucket represents a list of nodes sorted by XOR distance
 type KBucket struct {
-	Nodes []*Node // Use pointers to Node for easier referencing
+	Nodes    []*Node
+	Capacity int
 }
 
-// AddNode to KBucket, maintaining the sorted order based on XOR distance
+// NewKBucket creates a new KBucket with a specified capacity
+func NewKBucket(capacity int) *KBucket {
+	return &KBucket{
+		Nodes:    []*Node{},
+		Capacity: capacity,
+	}
+}
+
+// AddNode adds a node to the KBucket, maintaining the sorted order based on XOR distance
 func (kb *KBucket) AddNode(newNode *Node, targetID uint32) {
-	// Sort nodes by XOR distance (ascending)
+	if len(kb.Nodes) < kb.Capacity {
+		kb.Nodes = append(kb.Nodes, newNode)
+		return
+	}
+
 	sort.Slice(kb.Nodes, func(i, j int) bool {
 		return xorDistance(kb.Nodes[i].ID, targetID) < xorDistance(kb.Nodes[j].ID, targetID)
 	})
-	kb.Nodes = append(kb.Nodes, newNode)
+
+	if xorDistance(newNode.ID, targetID) < xorDistance(kb.Nodes[len(kb.Nodes)-1].ID, targetID) {
+		kb.Nodes[len(kb.Nodes)-1] = newNode
+	}
 }
 
-// FindClosest finds the closest node based on XOR distance (now in routing.go)
-func FindClosest(n *Node, targetID uint32) *Node {
-	var closest *Node
-	minDistance := uint32(^uint32(0)) // Maximum possible uint32 value
+// FindClosestKNodes returns the closest K nodes based on XOR distance
+func (kb *KBucket) FindClosestKNodes(targetID uint32, k int) []*Node {
+	sort.Slice(kb.Nodes, func(i, j int) bool {
+		return xorDistance(kb.Nodes[i].ID, targetID) < xorDistance(kb.Nodes[j].ID, targetID)
+	})
 
-	// Loop through neighbors to find the closest
-	for _, neighbor := range n.Neighbors {
-		distance := xorDistance(neighbor.ID, targetID)
-		if distance < minDistance {
-			minDistance = distance
-			closest = neighbor
-		}
+	if len(kb.Nodes) < k {
+		return kb.Nodes
 	}
+	return kb.Nodes[:k]
+}
 
-	// Return the closest node or nil if no neighbors exist
-	return closest
+// Print displays the contents of the KBucket
+func (kb *KBucket) Print() {
+	for _, node := range kb.Nodes {
+		fmt.Printf("Node %d at Address %s\n", node.ID, node.Address)
+	}
 }

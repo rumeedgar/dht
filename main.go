@@ -1,38 +1,50 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 func main() {
 	// Create nodes
-	node1 := NewNode(1, "localhost:8000")
-	node2 := NewNode(2, "localhost:8001")
-	node3 := NewNode(3, "localhost:8002")
-
-	// Join node2 to node1
-	node2.Join(node1)
-
-	// Join node3 to node2
-	node3.Join(node2)
-
-	// Print neighbors for each node
-	fmt.Println("Node 1 Neighbors:")
-	for _, neighbor := range node1.Neighbors {
-		// Dereference the pointer and print ID and Address
-		fmt.Printf("{ID: %d Address: %s} ", neighbor.ID, neighbor.Address)
+	nodes := []*Node{
+		NewNode(1, "localhost:8001"),
+		NewNode(2, "localhost:8002"),
+		NewNode(3, "localhost:8003"),
 	}
-	fmt.Println()
 
-	fmt.Println("Node 2 Neighbors:")
-	for _, neighbor := range node2.Neighbors {
-		// Dereference the pointer and print ID and Address
-		fmt.Printf("{ID: %d Address: %s} ", neighbor.ID, neighbor.Address)
-	}
-	fmt.Println()
+	// Connect nodes
+	nodes[0].Join(nodes[1])
+	nodes[1].Join(nodes[2])
 
-	fmt.Println("Node 3 Neighbors:")
-	for _, neighbor := range node3.Neighbors {
-		// Dereference the pointer and print ID and Address
-		fmt.Printf("{ID: %d Address: %s} ", neighbor.ID, neighbor.Address)
+	// Start listening on each node
+	for _, node := range nodes {
+		go node.Listen()
 	}
-	fmt.Println()
+
+	// Demonstrate some operations
+	fmt.Println("Storing data across nodes...")
+	nodes[0].Store("key1", "value1")
+	nodes[1].Store("key2", "value2")
+	nodes[2].Store("key3", "value3")
+
+	// Retrieve data
+	fmt.Println("Retrieving data...")
+	for _, node := range nodes {
+		for _, key := range []string{"key1", "key2", "key3"} {
+			value, found := node.Retrieve(key)
+			if found {
+				fmt.Printf("Node %d: %s = %s\n", node.ID, key, value)
+			}
+		}
+	}
+
+	// Keep the program running and show node status
+	fmt.Println("Demonstrating network status...")
+	for _, node := range nodes {
+		fmt.Printf("Node %d Neighbors: %d\n", node.ID, len(node.Neighbors))
+	}
+
+	// Wait a bit to allow network operations
+	time.Sleep(5 * time.Second)
 }

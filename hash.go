@@ -2,12 +2,12 @@ package main
 
 import (
 	"crypto/sha1"
-	"encoding/binary"
+	"math/big"
 )
 
-func hashKey(key string) uint32 {
-	hasher := sha1.New()
-	hasher.Write([]byte(key))
-	hashBytes := hasher.Sum(nil)
-	return binary.BigEndian.Uint32(hashBytes[:4])
+// hashKey takes a key (string) and returns its hash as a big integer
+func hashKey(key string) *big.Int {
+	h := sha1.New()
+	h.Write([]byte(key))
+	return new(big.Int).SetBytes(h.Sum(nil))
 }
