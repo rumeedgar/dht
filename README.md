@@ -32,7 +32,7 @@ A Golang implementation of a simplified DHT network simulator that demonstrates 
 1. Clone the repository
 ```bash
 git clone https://github.com/rumeedgar/dht.git
-cd dht-simulator
+cd dht
 ```
 
 2. Run the simulator
