@@ -19,7 +19,7 @@ type KBucket struct {
 // NewKBucket creates a new KBucket with a specified capacity
 func NewKBucket(capacity int) *KBucket {
 	return &KBucket{
-		Nodes:    []*Node{},
+		Nodes:    make([]*Node, 0),
 		Capacity: capacity,
 	}
 }

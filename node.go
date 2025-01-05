@@ -19,7 +19,7 @@ func NewNode(id uint32, address string) *Node {
 	return &Node{
 		ID:           id,
 		Address:      address,
-		Neighbors:    []*Node{},
+		Neighbors:    make([]*Node, 0),
 		RoutingTable: NewKBucket(8),
 		Data:         make(map[string]string),
 	}
